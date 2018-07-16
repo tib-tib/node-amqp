@@ -1,0 +1,13 @@
+{
+  "name": "node-amqp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:tib-tib/node-amqp.git",
+  "author": "Thibaut Gatouillat <thibaut.gatouillat@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "amqp-connection-manager": "2.0.0",
+    "amqplib": "0.5.2",
+    "bluebird": "3.5.1"
+  }
+}
