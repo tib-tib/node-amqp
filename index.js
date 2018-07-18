@@ -1,46 +1,80 @@
 const amqp = require('amqp-connection-manager')
 
 class AmqpService {
-  constructor(url = 'amqp://localhost') {
+  constructor() {
+    this.consumerConnection = null
+    this.producerConnection = null
+
+    this.queueConfig = {
+      durable: true,
+      arguments: {
+        'x-expires': 172800000, // 2 days
+        'x-queue-mode': 'lazy'
+      }
+    }
+  }
+
+  _createConnection(url, isProducer) {
     const connection = amqp.connect([url])
-    connection.on('connect', () => console.log('Connected to RabbitMQ'));
+    const prefix = isProducer ? 'Producer' : 'Consumer'
+
+    connection.on('connect', () => console.log(`${prefix} connected to RabbitMQ at ${url}`))
     connection.on('disconnect', ({err}) => {
-      console.log('Disconnected from RabbitMQ', err.stack)
+      console.log(`${prefix} disconnected from RabbitMQ`, err.stack)
     })
-    this.connection = connection
+    return connection
   }
 
-  listen(queue, messageHandler) {
-    const channelWrapper = this.connection.createChannel({
-      json: true,
-      setup: (channel) => Promise.all([
-        channel.assertQueue(queue, { durable: true }),
-        channel.prefetch(1),
-        channel.consume(queue, message => messageHandler({
-          payload: JSON.parse(message.content.toString()),
-          release: () => channelWrapper.ack(message),
-          reject: () => channelWrapper.nack(message)
-        }))
-      ])
-    })
-    return channelWrapper.waitForConnect()
+  start(url) {
+    if (!url) {
+      throw new Error('URL_MISSING')
+    }
+    this.consumerConnection = this._createConnection(url, true)
+    this.producerConnection = this._createConnection(url, false)
   }
 
-  send(queue, message) {
-    const channelWrapper = this.connection.createChannel({
-      json: true,
-      setup: channel => channel.assertQueue(queue)
-    })
-    return channelWrapper.sendToQueue(queue, message)
-      .catch(error => {
-        this.closeConnection()
-        return Promise.reject(error)
-      })
+  async listen(queue, messageHandler) {
+    if (!queue) {
+      return Promise.reject(new Error('QUEUE_NAME_MISSING'))
+    }
+
+    if (!messageHandler || typeof messageHandler !== 'function') {
+      console.warn('INCORRECT_MESSAGE_HANDLER')
+    }
+
+    const consumerChannel = this.consumerConnection.createChannel({ json: true })
+    consumerChannel.on('close', () => console.log('Consumer channel closed'))
+    consumerChannel.on('error', (error) => console.log('Consumer channel error:', error))
+
+    await consumerChannel.waitForConnect()
+    return consumerChannel.addSetup((channel) => Promise.all([
+      channel.assertQueue(queue, this.queueConfig),
+      channel.prefetch(1),
+      channel.consume(queue, message => messageHandler({
+        payload: JSON.parse(message.content.toString()),
+        release: () => consumerChannel.ack(message),
+        reject: () => consumerChannel.nack(message)
+      }))
+    ]))
+  }
+
+  async send(queue, message) {
+    const producerChannel = this.producerConnection.createChannel({ json: true })
+    producerChannel.on('close', () => console.log('Producer channel closed'))
+    producerChannel.on('error', (error) => console.log('Producer channel error:', error))
+
+    await producerChannel.waitForConnect()
+    await producerChannel.addSetup((channel) => channel.assertQueue(queue, this.queueConfig))
+    return producerChannel.sendToQueue(queue, message, { persistent: true })
   }
 
   closeConnection() {
-    if (this.connection) {
-      this.connection.close()
+    if (this.consumerConnection) {
+      this.consumerConnection.close()
+    }
+
+    if (this.producerConnection) {
+      this.producerConnection.close()
     }
   }
 }
