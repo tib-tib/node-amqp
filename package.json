@@ -1,7 +1,8 @@
 {
   "name": "node-rabbitmq-wrapper",
-  "version": "1.0.2",
+  "version": "1.1.1",
   "main": "index.js",
+  "keywords": ["AMQP", "AMQP 0-9-1", "RabbitMQ", "amqplib"],
   "repository": "git@github.com:tib-tib/node-amqp.git",
   "author": "Thibaut Gatouillat <thibaut.gatouillat@gmail.com>",
   "license": "MIT",
