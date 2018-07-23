@@ -47,6 +47,11 @@ class AmqpService {
     consumerChannel.on('error', (error) => console.log('Consumer channel error:', error))
 
     await consumerChannel.waitForConnect()
+
+    if (!this.consumerConnection.isConnected()) {
+      return Promise.reject(new Error('NO_CONNECTION'))
+    }
+
     return consumerChannel.addSetup((channel) => Promise.all([
       channel.assertQueue(queue, this.queueConfig),
       channel.prefetch(1),
@@ -59,6 +64,10 @@ class AmqpService {
   }
 
   async send(queue, message) {
+    if (!this.producerConnection.isConnected()) {
+      return Promise.reject(new Error('NO_CONNECTION'))
+    }
+
     const producerChannel = this.producerConnection.createChannel({ json: true })
     producerChannel.on('close', () => console.log('Producer channel closed'))
     producerChannel.on('error', (error) => console.log('Producer channel error:', error))

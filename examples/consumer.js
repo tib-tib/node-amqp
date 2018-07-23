@@ -3,7 +3,8 @@ const amqpService = new AmqpService()
 
 amqpService.start('amqp://localhost')
 
-amqpService.listen('test-queue', (message) => {
+const queueName = 'test-queue'
+amqpService.listen(queueName, (message) => {
   console.log('Message received:', message.payload)
   return message.release()
 })
