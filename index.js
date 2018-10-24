@@ -18,7 +18,7 @@ class AmqpService {
     const connection = amqp.connect([url])
     const prefix = isProducer ? 'Producer' : 'Consumer'
 
-    connection.on('connect', () => console.log(`${prefix} connected to RabbitMQ at ${url}`))
+    connection.on('connect', () => console.log(`${prefix} connected to RabbitMQ`))
     connection.on('disconnect', ({err}) => {
       console.log(`${prefix} disconnected from RabbitMQ`, err.stack)
     })
