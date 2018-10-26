@@ -1,13 +1,13 @@
 const amqp = require('amqp-connection-manager')
 
 class AmqpService {
-  constructor(arguments = {}) {
+  constructor(args = {}) {
     this.consumerConnection = null
     this.producerConnection = null
 
     this.queueConfig = {
       durable: true,
-      arguments,
+      arguments: args,
     }
   }
 
