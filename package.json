@@ -2,13 +2,26 @@
   "name": "node-rabbitmq-wrapper",
   "version": "1.3.3",
   "main": "index.js",
-  "keywords": ["AMQP", "AMQP 0-9-1", "RabbitMQ", "amqplib"],
+  "keywords": [
+    "AMQP",
+    "AMQP 0-9-1",
+    "RabbitMQ",
+    "amqplib"
+  ],
   "repository": "git@github.com:tib-tib/node-amqp.git",
   "author": "Thibaut Gatouillat <thibaut.gatouillat@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint . --ext .js"
+  },
   "dependencies": {
     "amqp-connection-manager": "2.0.0",
     "amqplib": "0.5.2",
     "bluebird": "3.5.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3"
   }
 }

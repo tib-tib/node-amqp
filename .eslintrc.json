@@ -1,0 +1,21 @@
+{
+  "extends": ["airbnb-base"],
+  "rules": {
+    "object-curly-newline": 0,
+    "max-len": ["error", {
+      "code": 120
+    }],
+    "lines-between-class-members": 2,
+    "no-unused-expressions": ["error", {
+      "allowShortCircuit": true
+    }]
+  },
+  "globals": {
+    "fetch": true,
+    "document": true,
+    "describe": true,
+    "it": true,
+    "expect": true,
+    "afterEach": true
+  }
+}

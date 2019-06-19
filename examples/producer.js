@@ -1,17 +1,18 @@
-const AmqpService = require('..')
-const amqpService = new AmqpService()
+const AmqpService = require('..');
 
-const queueName = 'test-queue'
+const amqpService = new AmqpService();
+
+const queueName = 'test-queue';
 const message = {
-    id: `random-id-${Math.round(Math.random() * 10000)}`,
-    text: 'Bacon ipsum dolor amet prosciutto landjaeger bresaola short loin ribeye.'
-}
+  id: `random-id-${Math.round(Math.random() * 10000)}`,
+  text: 'Bacon ipsum dolor amet prosciutto landjaeger bresaola short loin ribeye.',
+};
 
-amqpService.start('amqp://localhost')
+amqpService.start('amqp://localhost');
 
 amqpService.send(queueName, message)
   .then(() => {
-    console.log('Message', JSON.stringify(message), 'sent to queue', queueName)
+    console.log('Message', JSON.stringify(message), 'sent to queue', queueName);
   }).catch((error) => {
-    console.log('An error occured while sending message:', error)
-  })
+    console.log('An error occured while sending message:', error);
+  });
