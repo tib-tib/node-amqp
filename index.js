@@ -82,12 +82,8 @@ class AmqpService {
   }
 
   closeConnection() {
-    if (this.consumerConnection) {
-      this.consumerConnection.close();
-    }
-
-    if (this.producerConnection) {
-      this.producerConnection.close();
+    if (this.connection) {
+      this.connection.close();
     }
   }
 }
