@@ -14,6 +14,11 @@
   "scripts": {
     "lint": "eslint . --ext .js"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint"
+    }
+  },
   "dependencies": {
     "amqp-connection-manager": "2.0.0",
     "amqplib": "0.5.2",
@@ -22,6 +27,7 @@
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.17.3"
+    "eslint-plugin-import": "^2.17.3",
+    "husky": "^2.4.1"
   }
 }
